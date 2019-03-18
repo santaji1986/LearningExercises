@@ -1,14 +1,38 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 class PerfectSquare {
 
     public static void main(String[] args) {
         final PerfectSquare s = new PerfectSquare();
-        // s.solution(6000, 7000);
-        // s.solution(10, 20);
-        s.findIndivisibleSQRTNumber(6000, 7000);
 
+        // s.solution(6000, 7000); // 1st approach
+        // s.solution(10, 20);
+        s.findIndivisibleSQRTNumber(1, 1000); // 2nd approach
+
+        // System.out.println(s.getMaxLevelMinIndivisibleNumber(map));
+
+    }
+
+    private Map.Entry<Integer, Integer> getMaxLevelMinIndivisibleNumber(Map<Integer, Integer> map) {
+
+        Map.Entry<Integer, Integer> maxEntry = null;
+        for (final Map.Entry<Integer, Integer> entry : map.entrySet()) {
+
+            if (null == maxEntry) {
+                maxEntry = entry;
+            }
+            if (entry.getValue() > maxEntry.getValue()) {
+                maxEntry = entry;
+            } else if (entry.getValue() == maxEntry.getValue()) {
+                if (entry.getKey() < maxEntry.getKey()) {
+                    maxEntry = entry;
+                }
+            }
+        }
+        System.out.println("maxEntry : " + maxEntry);
+        return maxEntry;
     }
 
     public int solution(int A, int B) {
@@ -17,6 +41,7 @@ class PerfectSquare {
         boolean isPerfect;
         int resultedNumber = 0;
         int testNumber = 0; // just holding copy of iterating number
+        int testNumberprev = Integer.MAX_VALUE;
 
         for (int i = A; i <= B; i++) {
 
@@ -36,20 +61,17 @@ class PerfectSquare {
                         maxCount = counter;
                         testNumber = (int) Math.sqrt(testNumber);
                         resultedNumber = testNumber;
+                        if (testNumberprev > testNumber) {
+                            testNumberprev = testNumber;
+                        }
                     }
                 } else {
                     isPerfect = false; // might be redundant
                     break;
                 }
-
-                System.out.println("Max square number:  " + resultedNumber);
-                // if(testNumber == 1){
-                // break;
-                // }
-                //
             }
-
         }
+        System.out.println("Max square number:  " + testNumberprev);
         return resultedNumber;
     }
 
@@ -71,21 +93,31 @@ class PerfectSquare {
     private int countLevel = 0;
 
     public void findIndivisibleSQRTNumber(int start, int end) {
+        final Map<Integer, Integer> map = getMapOfElementAndLevelCount(start, end);
+
+        int minNumber = 0;
+        final Entry<Integer, Integer> entry = getMaxLevelMinIndivisibleNumber(map);
+        if (null != entry) {
+            minNumber = entry.getKey();
+        }
+        System.out.println("Max level min indivisible number:  " + minNumber);
+    }
+
+    private Map<Integer, Integer> getMapOfElementAndLevelCount(int start, int end) {
+        int resultNumber = 0;
         final Map<Integer, Integer> map = new HashMap<>();
 
-        int resultNumber = 0;
         for (int i = start; i <= end; i++) {
             countLevel = 0;
             resultNumber = getIndivisibleSQRTNumber(i);
-
             System.out.println("resultNumber : " + resultNumber + " countLevel : " + countLevel);
+
             if (countLevel != 0) {
                 map.put(resultNumber, countLevel);
             }
         }
-        for (final Map.Entry<Integer, Integer> entry : map.entrySet()) {
-            System.out.println("Lowest indivisible number : " + entry.getKey() + " Level : " + entry.getValue());
-        }
+        System.out.println("MAP : " + map);
+        return map;
     }
 
     public int getIndivisibleSQRTNumber(int number) {
