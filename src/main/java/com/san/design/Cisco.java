@@ -1,16 +1,13 @@
 package com.san.design;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 //@Data
-//@ToString(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 public class Cisco extends ETVPark {
-    private String special = "";
-
-    public Cisco() {
-        this.special = "Specialized in Networking";
-    }
+    private String special = "Specialized in Networking";
 
     @Override
     public String toString() {
